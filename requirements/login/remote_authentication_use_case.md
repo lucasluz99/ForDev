@@ -16,7 +16,7 @@
 1. Sistema retorna uma mensagem de erro inesperado
 
 ## Execeção - Falha no servidor
-1. Sistema retorna uma mensagem de erro inesperado
+1. OK - Sistema retorna uma mensagem de erro inesperado
 
 ## Execeção - Credenciais inválidas
 1. Sistema retorna uma mensagem de erro inesperado informando que as credenciais estão erradas
