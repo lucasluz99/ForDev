@@ -10,7 +10,7 @@
 1. Sistema retorna uma mesagem de erro inesperado
 
 ## Execeção - Dados inválidos
-1. Sistema retorna uma mensagem de erro inesperado
+1. OK - Sistema retorna uma mensagem de erro inesperado
 
 ## Execeção - Resposta inválida
 1. Sistema retorna uma mensagem de erro inesperado
