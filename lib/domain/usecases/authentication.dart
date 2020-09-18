@@ -10,9 +10,5 @@ class AuthenticationParams {
   final String email;
   final String secret;
 
-  Map<String, String> toJson() {
-    return {'email': email, 'password': secret};
-  }
-
-  AuthenticationParams({@required this.email, @required this.secret});
+ AuthenticationParams({@required this.email, @required this.secret});
 }
