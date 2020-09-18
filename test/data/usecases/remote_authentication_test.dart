@@ -13,18 +13,19 @@ class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
   RemoteAuthentication sut;
+  AuthenticationParams params;
   HttpClient httpClient;
   String url;
 
   setUp(() {
     httpClient = MockHttpClient();
+    params = AuthenticationParams(
+        email: faker.internet.email(), secret: faker.internet.password());
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
   });
 
   test('Should call HttpClient with correct values', () async {
-    final params = AuthenticationParams(
-        email: faker.internet.email(), secret: faker.internet.password());
     await sut.auth(params);
 
     verify(httpClient.request(
@@ -40,9 +41,6 @@ void main() {
             body: anyNamed('body')))
         .thenThrow(HttpError.badRequest);
 
-    final params = AuthenticationParams(
-        email: faker.internet.email(), secret: faker.internet.password());
-    
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
