@@ -12,7 +12,7 @@
 ## Execeção - OK - Dados inválidos
 1.  Sistema retorna uma mensagem de erro inesperado
 
-## Execeção - Resposta inválida
+## Execeção - OK -Resposta inválida
 1. Sistema retorna uma mensagem de erro inesperado
 
 ## Execeção - OK - Falha no servidor
