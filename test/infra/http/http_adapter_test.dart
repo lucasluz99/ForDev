@@ -10,12 +10,14 @@ class HttpAdapter {
   final Client client;
 
   HttpAdapter(this.client);
-  Future<void> request({@required String url, @required String method,Map body}) async {
+  Future<void> request(
+      {@required String url, @required String method, Map body}) async {
     final headers = {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(url, headers: headers,body: jsonEncode(body));
+    final String jsonBody = body == null ? null : jsonEncode(body);
+    client.post(url, headers: headers, body: jsonBody);
   }
 }
 
@@ -34,14 +36,20 @@ void main() {
 
   group('post', () {
     test('Shoud call post with corret values', () async {
-      await sut.request(url: url, method: 'post',body: {'any':'any'});
+      await sut.request(url: url, method: 'post', body: {'any': 'any'});
 
-      verify(client.post(url, headers: {
-        'content-type': 'application/json',
-        'accept': 'application/json'
-      },
-      body: '{"any":"any"}'
-      ));
+      verify(client.post(url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: '{"any":"any"}'));
+    });
+
+    test('Shoud call post without body', () async {
+      await sut.request(url: url, method: 'post');
+
+      verify(client.post(any, headers: anyNamed('headers')));
     });
   });
 }
