@@ -6,8 +6,6 @@ import 'package:test/test.dart';
 
 import 'package:ForDev/infra/http/http.dart';
 
-
-
 class MockClient extends Mock implements Client {}
 
 void main() {
@@ -84,28 +82,50 @@ void main() {
       expect(result, null);
     });
 
-
-     test('Should return BadRequestError if post returns 400', () async {
+    test('Should return BadRequestError if post returns 400', () async {
       mockResponse(400);
 
-     final future = sut.request(url: url, method: 'post');
+      final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.badRequest));
     });
 
-      test('Should return BadRequestError if post returns 401', () async {
+    test('Should return UnauthorizedError if post returns 401', () async {
       mockResponse(401);
 
-     final future = sut.request(url: url, method: 'post');
+      final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.unauthorized));
     });
 
+    test('Should return UnauthorizedError if post returns 401', () async {
+      mockResponse(401);
 
-     test('Should return BadRequestError if post returns 500', () async {
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+     test('Should return ForbiddenError if post returns 403', () async {
+      mockResponse(403);
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
+
+     test('Should return NotFoundError if post returns 404', () async {
+      mockResponse(404);
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+    test('Should return ServerError if post returns 500', () async {
       mockResponse(500);
 
-     final future = sut.request(url: url, method: 'post');
+      final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.serverError));
     });
