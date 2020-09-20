@@ -19,7 +19,12 @@ class HttpAdapter implements HttpClient {
     };
     final String jsonBody = body == null ? null : jsonEncode(body);
     final response = await client.post(url, headers: headers, body: jsonBody);
-    return response.body.isEmpty ? null : jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    }else {
+      return null;
+    }
+    
   }
 }
 
@@ -40,9 +45,10 @@ void main() {
     PostExpectation mockRequest() => when(
         client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
 
-    void mockResponse(int statusCode,{String body ='{"any":"any"}'}) {
-        mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    void mockResponse(int statusCode, {String body = '{"any":"any"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
+
     setUp(() {
       mockResponse(200);
     });
@@ -72,7 +78,7 @@ void main() {
     });
 
     test('Shoud return null if post returns 200 with no data', () async {
-      mockResponse(200,body: '');
+      mockResponse(200, body: '');
       await sut.request(url: url, method: 'post');
 
       final result = await sut.request(url: url, method: 'post');
@@ -80,8 +86,17 @@ void main() {
       expect(result, null);
     });
 
-     test('Shoud return null if post returns 204 with no data', () async {
-      mockResponse(204,body: '');
+    test('Shoud return null if post returns 204 with no data', () async {
+      mockResponse(204, body: '');
+      await sut.request(url: url, method: 'post');
+
+      final result = await sut.request(url: url, method: 'post');
+
+      expect(result, null);
+    });
+
+    test('Shoud return null if post returns 204 with data', () async {
+      mockResponse(204);
       await sut.request(url: url, method: 'post');
 
       final result = await sut.request(url: url, method: 'post');
