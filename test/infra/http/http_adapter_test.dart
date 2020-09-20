@@ -37,11 +37,16 @@ void main() {
   });
 
   group('post', () {
-    test('Shoud call post with corret values', () async {
-      when(client.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => Response('{"any":"any"}', 200));
+    PostExpectation mockRequest() => when(
+        client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
 
+    void mockResponse(int statusCode,{String body ='{"any":"any"}'}) {
+        mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+    setUp(() {
+      mockResponse(200);
+    });
+    test('Shoud call post with corret values', () async {
       await sut.request(url: url, method: 'post', body: {'any': 'any'});
 
       verify(client.post(url,
@@ -53,17 +58,12 @@ void main() {
     });
 
     test('Shoud call post without body', () async {
-      when(client.post(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => Response('{"any":"any"}', 200));
-
       await sut.request(url: url, method: 'post');
 
       verify(client.post(any, headers: anyNamed('headers')));
     });
 
     test('Shoud return data if post returns 200', () async {
-      when(client.post(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => Response('{"any":"any"}', 200));
       await sut.request(url: url, method: 'post');
 
       final result = await sut.request(url: url, method: 'post');
@@ -72,8 +72,7 @@ void main() {
     });
 
     test('Shoud return null if post returns 200 with no data', () async {
-      when(client.post(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => Response('', 200));
+      mockResponse(200,body: '');
       await sut.request(url: url, method: 'post');
 
       final result = await sut.request(url: url, method: 'post');
