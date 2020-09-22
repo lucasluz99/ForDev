@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../components/components.dart';
+import '../../components/components.dart';
+
+import '../pages.dart';
 
 class LoginPage extends StatelessWidget {
+  final LoginPresenter presenter;
+
+  LoginPage(this.presenter);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +23,7 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
+                      onChanged: presenter.validateEmail,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                        
