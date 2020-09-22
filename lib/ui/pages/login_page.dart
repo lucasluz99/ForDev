@@ -11,7 +11,7 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             LoginHeader(),
-            Headline1(text:'Login'),
+            Headline1(text: 'Login'),
             Padding(
               padding: const EdgeInsets.all(32),
               child: Form(
@@ -20,6 +20,7 @@ class LoginPage extends StatelessWidget {
                     TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
+                       
                           icon: Icon(
                             Icons.email,
                             color: Theme.of(context).primaryColorLight,
@@ -38,7 +39,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     RaisedButton(
                       child: Text('Entrar'.toUpperCase()),
-                      onPressed: () {},
+                      onPressed: null,
                     ),
                     FlatButton.icon(
                       icon: Icon(Icons.person),
