@@ -39,9 +39,12 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
     final email = faker.internet.email();
+    final password = faker.internet.password();
 
     await tester.enterText(find.bySemanticsLabel('Email'), email);
+    await tester.enterText(find.bySemanticsLabel('Senha'), password);
 
     verify(presenter.validateEmail(email));
+    verify(presenter.validatePassword(password));
   });
 }

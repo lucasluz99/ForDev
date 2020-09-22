@@ -36,6 +36,7 @@ class LoginPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 32, top: 10),
                       child: TextFormField(
+                        onChanged: presenter.validatePassword,
                         obscureText: true,
                         decoration: InputDecoration(
                             icon: Icon(Icons.lock,
