@@ -8,10 +8,11 @@ import 'package:ForDev/ui/pages/pages.dart';
 import 'package:mockito/mockito.dart';
 
 class MockLoginPresenter extends Mock implements LoginPresenter {}
+
 void main() {
   LoginPresenter presenter;
-  StreamController<String>  emailController;
-  StreamController<String>  passwordController;
+  StreamController<String> emailController;
+  StreamController<String> passwordController;
   StreamController<bool> isFormValidController;
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -20,15 +21,17 @@ void main() {
     emailController = StreamController<String>();
     isFormValidController = StreamController<bool>();
 
-    when(presenter.emailErrorStream).thenAnswer((_) => emailController.stream );
-    when(presenter.passwordErrorStream).thenAnswer((_) => passwordController.stream);
-      when(presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
+    when(presenter.emailErrorStream).thenAnswer((_) => emailController.stream);
+    when(presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordController.stream);
+    when(presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
     final loginPage = MaterialApp(home: LoginPage(presenter));
 
     await tester.pumpWidget(loginPage);
   }
 
-  tearDown((){
+  tearDown(() {
     emailController.close();
     passwordController.close();
     isFormValidController.close();
@@ -75,10 +78,10 @@ void main() {
 
     await tester.pump();
 
-    expect(find.text('any error'),findsOneWidget);
+    expect(find.text('any error'), findsOneWidget);
   });
 
-    testWidgets('Should present no error if email is valid',
+  testWidgets('Should present no error if email is valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -89,12 +92,10 @@ void main() {
     final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
-
-
   });
 
   testWidgets('Should present no error if email is valid',
-      (WidgetTester tester) async { 
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     emailController.add('');
@@ -104,8 +105,6 @@ void main() {
     final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
-
-    
   });
 
   testWidgets('Should present error if password is invalid',
@@ -116,11 +115,10 @@ void main() {
 
     await tester.pump();
 
-    expect(find.text('any error'),findsOneWidget);
+    expect(find.text('any error'), findsOneWidget);
   });
 
-
-testWidgets('Should present no error if password is valid',
+  testWidgets('Should present no error if password is valid',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -131,12 +129,10 @@ testWidgets('Should present no error if password is valid',
     final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
-
-
   });
 
   testWidgets('Should present error if password is valid',
-      (WidgetTester tester) async { 
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     emailController.add('');
@@ -146,31 +142,45 @@ testWidgets('Should present no error if password is valid',
     final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
-    
   });
 
   testWidgets('Should enable button with fields are valid',
-      (WidgetTester tester) async { 
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     isFormValidController.add(true);
 
     await tester.pump();
 
-   final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
-    expect(button.onPressed,isNotNull);
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(button.onPressed, isNotNull);
   });
 
   testWidgets('Should disable button with fields are invalid',
-      (WidgetTester tester) async { 
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     isFormValidController.add(false);
 
     await tester.pump();
 
-   final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
-    expect(button.onPressed,isNull);
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(button.onPressed, isNull);
+  });
+
+  testWidgets('Should call authentication method on form submit',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+
+    await tester.pump();
+
+    await tester.tap(find.byType(RaisedButton));
+
+    await tester.pump();
+
+    verify(presenter.auth()).called(1);
+      
   });
 }
-
