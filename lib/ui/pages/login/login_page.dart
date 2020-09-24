@@ -57,16 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                           padding: const EdgeInsets.only(bottom: 32, top: 10),
                           child: PasswordInput(),
                         ),
-                        StreamBuilder<bool>(
-                            stream: widget.presenter.isFormValidStream,
-                            builder: (context, snapshot) {
-                              return RaisedButton(
-                                child: Text('Entrar'.toUpperCase()),
-                                onPressed: snapshot.data == true
-                                    ? widget.presenter.auth
-                                    : null,
-                              );
-                            }),
+                        LoginButton(),
                         FlatButton.icon(
                             icon: Icon(Icons.person),
                             label: Text('Criar conta'),
@@ -83,3 +74,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
