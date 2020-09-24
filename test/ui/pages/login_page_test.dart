@@ -17,15 +17,15 @@ void main() {
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
 
-  Future<void> loadPage(WidgetTester tester) async {
-    presenter = MockLoginPresenter();
+  void initStreams() {
     passwordController = StreamController<String>();
     emailController = StreamController<String>();
     mainErrorController = StreamController<String>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
-    
+  }
 
+  void mockStreams() {
     when(presenter.emailErrorStream).thenAnswer((_) => emailController.stream);
     when(presenter.passwordErrorStream)
         .thenAnswer((_) => passwordController.stream);
@@ -33,19 +33,29 @@ void main() {
         .thenAnswer((_) => isFormValidController.stream);
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-     when(presenter.mainErrorStream).thenAnswer((_) => mainErrorController.stream);
-    final loginPage = MaterialApp(home: LoginPage(presenter));
-
-    await tester.pumpWidget(loginPage);
+    when(presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
   }
 
-  tearDown(() {
+  void closeStreams() {
     emailController.close();
     passwordController.close();
     isFormValidController.close();
     isLoadingController.close();
     mainErrorController.close();
-  });
+  }
+
+  Future<void> loadPage(WidgetTester tester) async {
+    presenter = MockLoginPresenter();
+    initStreams();
+    mockStreams();
+
+    final loginPage = MaterialApp(home: LoginPage(presenter));
+
+    await tester.pumpWidget(loginPage);
+  }
+
+  tearDown(closeStreams);
 
   testWidgets('Should load with correct initial state',
       (WidgetTester tester) async {
@@ -219,7 +229,8 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets('Should present error message if authentication fails', (WidgetTester tester) async {
+  testWidgets('Should present error message if authentication fails',
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     mainErrorController.add('main error');
@@ -236,5 +247,4 @@ void main() {
       verify(presenter.dispose()).called(1);
     });
   });
-
 }
