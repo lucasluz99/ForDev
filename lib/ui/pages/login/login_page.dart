@@ -10,7 +10,6 @@ class LoginPage extends StatelessWidget {
   LoginPage(this.presenter);
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       body: Builder(builder: (context) {
         presenter.isLoadingStream.listen((isLoading) {
@@ -19,26 +18,36 @@ class LoginPage extends StatelessWidget {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => SimpleDialog(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Aguarde...',
-                          textAlign: TextAlign.center,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Aguarde...',
+                              textAlign: TextAlign.center,
+                            )
+                          ],
                         )
                       ],
-                    )
-                  ],
-                ));
-          }else {
-            if(Navigator.canPop(context)){
+                    ));
+          } else {
+            if (Navigator.canPop(context)) {
               Navigator.of(context).pop();
             }
+          }
+        });
+
+        presenter.mainErrorStream.listen((mainError) {
+          if (mainError != null) {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.red[900],
+
+              content: Text(mainError,textAlign: TextAlign.center,),
+            ));
           }
         });
         return SingleChildScrollView(
@@ -98,10 +107,9 @@ class LoginPage extends StatelessWidget {
                             );
                           }),
                       FlatButton.icon(
-                        icon: Icon(Icons.person),
-                        label: Text('Criar conta'),
-                        onPressed: () {}
-                      )
+                          icon: Icon(Icons.person),
+                          label: Text('Criar conta'),
+                          onPressed: () {})
                     ],
                   ),
                 ),
