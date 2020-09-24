@@ -14,18 +14,22 @@ void main() {
   StreamController<String> emailController;
   StreamController<String> passwordController;
   StreamController<bool> isFormValidController;
+  StreamController<bool> isLoadingController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = MockLoginPresenter();
     passwordController = StreamController<String>();
     emailController = StreamController<String>();
     isFormValidController = StreamController<bool>();
+    isLoadingController = StreamController<bool>();
 
     when(presenter.emailErrorStream).thenAnswer((_) => emailController.stream);
     when(presenter.passwordErrorStream)
         .thenAnswer((_) => passwordController.stream);
     when(presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
+    when(presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
     final loginPage = MaterialApp(home: LoginPage(presenter));
 
     await tester.pumpWidget(loginPage);
@@ -55,6 +59,7 @@ void main() {
 
     final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
     expect(button.onPressed, null);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should call validate with correct values',
@@ -181,6 +186,30 @@ void main() {
     await tester.pump();
 
     verify(presenter.auth()).called(1);
-      
+  });
+
+  testWidgets('Should present progress indicator on loading',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    isLoadingController.add(false);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
