@@ -11,7 +11,7 @@ void main() {
   Validation validation;
   StreamLoginPresenter sut;
   String email;
-
+  String password;
   PostExpectation mockValidatationCall(String field) {
     return when(validation.validate(
         field: field == null ? anyNamed('field') : field,
@@ -26,6 +26,7 @@ void main() {
     validation = MockValidation();
     sut = StreamLoginPresenter(validation: validation);
     email = faker.internet.email();
+    password = faker.internet.password();
     mockValidation();
   });
 
@@ -39,8 +40,26 @@ void main() {
     mockValidation(value: 'error');
 
     sut.emailErrorStream.listen(expectAsync1((error) => expect(error,'error')));
+    sut.isFormValidStream.listen(expectAsync1((isValid) => expect(isValid,false)));
 
     sut.validateEmail(email);
     sut.validateEmail(email);
+  });
+
+    test('Should emit null if validation succeeds', () {
+  
+    sut.emailErrorStream.listen(expectAsync1((error) => expect(error,null)));
+    sut.isFormValidStream.listen(expectAsync1((isValid) => expect(isValid,false)));
+
+    sut.validateEmail(email);
+    sut.validateEmail(email);
+  });
+
+
+
+  test('Should call Validation with correct password', () {
+    sut.validatePassword(password);
+
+    verify(validation.validate(field: 'password', value: password)).called(1);
   });
 }
