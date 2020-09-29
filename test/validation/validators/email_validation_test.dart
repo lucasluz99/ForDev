@@ -1,4 +1,5 @@
 import 'package:ForDev/validation/protocols/field_validation.dart';
+import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 
 class EmailValidation implements FieldValidation {
@@ -11,19 +12,20 @@ class EmailValidation implements FieldValidation {
   }
 }
 void main() {
+  EmailValidation sut;
+
+  setUp(() {
+    sut = EmailValidation('any');
+  });
  
   test('Should return null if email is empty', () {
-      final sut = EmailValidation('any');
-
       final error = sut.validate('');
 
       expect(error,null);
   });
 
-    test('Should return null if email is null', () {
-      final sut = EmailValidation('any');
-
-      final error = sut.validate(null);
+    test('Should return null if email is valid', () {
+      final error = sut.validate(faker.internet.email());
 
       expect(error,null);
   });
