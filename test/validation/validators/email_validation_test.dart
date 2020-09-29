@@ -1,20 +1,7 @@
-import 'package:ForDev/validation/protocols/field_validation.dart';
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 
-class EmailValidation implements FieldValidation {
-  final String field;
-
-  EmailValidation(this.field);
-
-  String validate(String value) {
-    final regex = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    final isValid = value?.isEmpty == true || regex.hasMatch(value);
-
-    return isValid ? null : 'Campo inválido';
-  }
-}
+import 'package:ForDev/validation/validators/email_validation.dart';
 
 void main() {
   EmailValidation sut;
