@@ -16,8 +16,12 @@ class RequiredFieldValidation implements FieldValidation {
 }
 
 void main() {
+  RequiredFieldValidation sut;
+
+  setUp((){
+    sut = RequiredFieldValidation('any');
+  });
   test('Should return null if value is not empty', () {
-    final sut = RequiredFieldValidation('any');
   
    final error = sut.validate('any');
 
@@ -25,7 +29,6 @@ void main() {
   });
 
   test('Should return error if value is  empty', () {
-    final sut = RequiredFieldValidation('any');
   
    final error = sut.validate('');
 
