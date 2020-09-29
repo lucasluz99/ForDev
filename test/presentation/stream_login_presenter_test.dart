@@ -1,8 +1,8 @@
-import 'package:ForDev/domain/helpers/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:ForDev/domain/helpers/domain_error.dart';
 import 'package:ForDev/domain/entities/entities.dart';
 import 'package:ForDev/domain/usecases/authentication.dart';
 
@@ -40,8 +40,7 @@ void main() {
   }
 
   void mockAuthenticationError(DomainError error) {
-    mockAuthenticationCall()
-        .thenThrow(error); 
+    mockAuthenticationCall().thenThrow(error);
   }
 
   setUp(() {
@@ -161,20 +160,33 @@ void main() {
 
     expectLater(sut.isLoadingStream, emits(false));
 
-    sut.mainErrorStream.listen(expectAsync1((error) => expect(error,'Credenciais inválidas')));
+    sut.mainErrorStream.listen(
+        expectAsync1((error) => expect(error, 'Credenciais inválidas')));
 
     await sut.auth();
   });
 
-    test('Should emit correct events on UnexpectedError', () async {
+  test('Should emit correct events on UnexpectedError', () async {
     mockAuthenticationError(DomainError.unexpected);
     sut.validateEmail(email);
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emits(false));
 
-    sut.mainErrorStream.listen(expectAsync1((error) => expect(error,'Ocorreu um erro inesperado')));
+    sut.mainErrorStream.listen(
+        expectAsync1((error) => expect(error, 'Ocorreu um erro inesperado')));
 
     await sut.auth();
+  });
+
+  test('Should not emit after dispose', () async {
+    expectLater(sut.emailErrorStream, neverEmits(null));
+    
+     sut.dispose();  
+
+    sut.validateEmail(email);
+
+     
+
   });
 }
