@@ -8,25 +8,36 @@ class EmailValidation implements FieldValidation {
   EmailValidation(this.field);
 
   String validate(String value) {
-    return null;
+    final regex = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    final isValid = value?.isEmpty == true || regex.hasMatch(value);
+
+    return isValid ? null : 'Campo inválido';
   }
 }
+
 void main() {
   EmailValidation sut;
 
   setUp(() {
     sut = EmailValidation('any');
   });
- 
-  test('Should return null if email is empty', () {
-      final error = sut.validate('');
 
-      expect(error,null);
+  test('Should return null if email is empty', () {
+    final error = sut.validate('');
+
+    expect(error, null);
   });
 
-    test('Should return null if email is valid', () {
-      final error = sut.validate(faker.internet.email());
+  test('Should return null if email is valid', () {
+    final error = sut.validate(faker.internet.email());
 
-      expect(error,null);
+    expect(error, null);
+  });
+
+  test('Should return error if email is invalid', () {
+    final error = sut.validate('12@');
+
+    expect(error, 'Campo inválido');
   });
 }
