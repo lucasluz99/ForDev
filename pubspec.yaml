@@ -14,10 +14,11 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
-  provider:
   equatable:
+  provider:
+  get: 
   cupertino_icons: ^0.1.3
-
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
