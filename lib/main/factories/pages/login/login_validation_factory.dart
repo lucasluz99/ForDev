@@ -1,6 +1,9 @@
-import '../../../../validation/protocols/protocols.dart';
+import 'package:ForDev/main/builders/validation_builder.dart';
 
+import '../../../../validation/protocols/protocols.dart';
 import '../../../../validation/validators/validators.dart';
+
+import '../../../builders/builders.dart';
 
 ValidationComposite makeValidationComposite() {
   return ValidationComposite(makeLoginValidations());
@@ -8,8 +11,7 @@ ValidationComposite makeValidationComposite() {
 
 List<FieldValidation> makeLoginValidations() {
   return [
-    RequiredFieldValidation('email'),
-    EmailValidation('email'),
-    RequiredFieldValidation('password')
+    ...ValidationBuilder.field('email').required().email().build(),
+    ...ValidationBuilder.field('password').required().build()
   ];
 }
