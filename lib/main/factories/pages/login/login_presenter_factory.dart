@@ -1,11 +1,17 @@
-import '../../../../presentation/presenters/stream_login_presenter.dart';
+import '../../../../presentation/presenters/presenters.dart';
 import '../../../../ui/pages/pages.dart';
 
 import '../../usecases/usecases.dart';
 import 'login_validation_factory.dart';
 
-LoginPresenter makeLoginPresenter() {
+LoginPresenter makeStreamLoginPresenter() {
   return StreamLoginPresenter(
+      authentication: makeRemoteAuthenticaiton(),
+      validation: makeValidationComposite());
+}
+
+LoginPresenter makeGetxLoginPresenter() {
+  return GetxLoginPresenter(
       authentication: makeRemoteAuthenticaiton(),
       validation: makeValidationComposite());
 }
