@@ -1,3 +1,4 @@
+import 'package:ForDev/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mockito/mockito.dart';
@@ -12,24 +13,46 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
   LocalSaveCurrentAccount({this.saveSecureCacheStorage});
 
   Future<void> save(AccountEntity account) async {
-    await saveSecureCacheStorage.saveSecure(key: 'token', value: account.token);
+    try {
+      await saveSecureCacheStorage.saveSecure(
+          key: 'token', value: account.token);
+    } catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
 abstract class SaveSecureCacheStorage {
-  Future<void> saveSecure({@required String key,@required String value});
+  Future<void> saveSecure({@required String key, @required String value});
 }
 
-class MockSaveSecureCacheStorage extends Mock implements SaveSecureCacheStorage {}
+class MockSaveSecureCacheStorage extends Mock
+    implements SaveSecureCacheStorage {}
+
 void main() {
-  test('Should call SaveCacheStorage with correct values', () async {
-    final saveSecureCacheStorage = MockSaveSecureCacheStorage();
-    final sut = LocalSaveCurrentAccount(saveSecureCacheStorage:saveSecureCacheStorage);
+  SaveSecureCacheStorage saveSecureCacheStorage;
+  LocalSaveCurrentAccount sut;
+  AccountEntity account;
 
-    final account = AccountEntity(faker.guid.guid());
-
+  setUp(() {
+    saveSecureCacheStorage = MockSaveSecureCacheStorage();
+    sut =
+        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
+    account = AccountEntity(faker.guid.guid());
+  });
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(account);
 
-    verify(saveSecureCacheStorage.saveSecure(key: 'token',value:account.token));
+    verify(
+        saveSecureCacheStorage.saveSecure(key: 'token', value: account.token));
+  });
+
+  test('Should throw UnexpectedError if SaveSecureCacheStorage throws',
+      () async {
+    when(saveSecureCacheStorage.saveSecure(
+        key: anyNamed('key'), value: anyNamed('value')));
+    final future = sut.save(account);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
