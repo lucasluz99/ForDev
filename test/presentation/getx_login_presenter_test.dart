@@ -1,3 +1,4 @@
+import 'package:ForDev/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -13,12 +14,16 @@ class MockValidation extends Mock implements Validation {}
 
 class MockAuthentication extends Mock implements Authentication {}
 
+class MockSaveCurrentAccount extends Mock implements SaveCurrentAccount {}
+
 void main() {
   GetxLoginPresenter sut;
   Validation validation;
+  SaveCurrentAccount saveCurrentAccount;
   Authentication authentication;
   String email;
   String password;
+  String token;
 
   PostExpectation mockValidatationCall(String field) {
     return when(validation.validate(
@@ -34,22 +39,33 @@ void main() {
     return when(authentication.auth(any));
   }
 
+  PostExpectation mockSaveCurrentAccountCall() {
+    return when(saveCurrentAccount.save(any));
+  }
+
   void mockAuthentication() {
-    mockAuthenticationCall()
-        .thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
   }
 
   void mockAuthenticationError(DomainError error) {
     mockAuthenticationCall().thenThrow(error);
   }
 
+  void mockSaveCurrentAccountError() {
+    mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
+  }
+
   setUp(() {
     validation = MockValidation();
     authentication = MockAuthentication();
+    saveCurrentAccount = MockSaveCurrentAccount();
     sut = GetxLoginPresenter(
-        validation: validation, authentication: authentication);
+        validation: validation,
+        authentication: authentication,
+        saveCurrentAccount: saveCurrentAccount);
     email = faker.internet.email();
     password = faker.internet.password();
+    token = faker.guid.guid();
     mockValidation();
     mockAuthentication();
   });
@@ -144,6 +160,27 @@ void main() {
         .called(1);
   });
 
+  test('Should call SaveCurrentAccount with correct value', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream.listen(
+        expectAsync1((error) => expect(error, 'Ocorreu um erro inesperado')));
+
+    await sut.auth();
+  });
+
   test('Should emit correct events on Authentication success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
@@ -158,7 +195,7 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
 
     sut.mainErrorStream.listen(
         expectAsync1((error) => expect(error, 'Credenciais inválidas')));
@@ -171,11 +208,10 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream.listen(
         expectAsync1((error) => expect(error, 'Ocorreu um erro inesperado')));
 
     await sut.auth();
   });
-
 }
