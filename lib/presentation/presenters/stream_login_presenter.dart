@@ -12,6 +12,7 @@ class LoginState {
   String password;
   String emailError;
   String passwordError;
+  String navigateTo;
   String mainError;
   bool isLoading = false;
   
@@ -42,6 +43,9 @@ class StreamLoginPresenter implements LoginPresenter {
   
    Stream<String> get mainErrorStream =>
       _controller?.stream?.map((state) => state.mainError)?.distinct();
+  
+   Stream<String> get navigateToStream =>
+      _controller?.stream?.map((state) => state.navigateTo)?.distinct();
   
   Stream<bool> get isLoadingStream =>
       _controller?.stream?.map((state) => state.isLoading)?.distinct();
