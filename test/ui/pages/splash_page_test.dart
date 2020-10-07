@@ -37,7 +37,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    verify(presenter.loadCurrentAccount()).called(1);
+    verify(presenter.checkCurrentAccount()).called(1);
   });
 
   testWidgets('Should navigate to other page', (WidgetTester tester) async {
