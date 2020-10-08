@@ -11,14 +11,14 @@ class AddAccountParams extends Equatable {
   final String email;
   final String name;
   final String password;
-  final String confirmPassword;
+  final String passwordConfirmation;
 
-  List get props => [email, name, password, confirmPassword];
+  List get props => [email, name, password, passwordConfirmation];
 
   AddAccountParams({
     @required this.email,
     @required this.name,
     @required this.password,
-    @required this.confirmPassword,
+    @required this.passwordConfirmation,
   });
 }
