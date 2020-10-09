@@ -157,10 +157,9 @@ void main() {
         of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
 
     expect(emailTextChildren, findsOneWidget);
-
   });
 
-   testWidgets('Should present name error', (WidgetTester tester) async {
+  testWidgets('Should present name error', (WidgetTester tester) async {
     await loadPage(tester);
 
     nameController.add(UiError.invalidField);
@@ -181,12 +180,11 @@ void main() {
 
     final nameTextChildren = find.descendant(
         of: find.bySemanticsLabel('Nome'), matching: find.byType(Text));
-        
-    expect(nameTextChildren, findsOneWidget);
 
+    expect(nameTextChildren, findsOneWidget);
   });
 
-    testWidgets('Should present password error', (WidgetTester tester) async {
+  testWidgets('Should present password error', (WidgetTester tester) async {
     await loadPage(tester);
 
     passwordController.add(UiError.invalidField);
@@ -207,12 +205,12 @@ void main() {
 
     final passwordTextChildren = find.descendant(
         of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
-        
-    expect(passwordTextChildren, findsOneWidget);
 
+    expect(passwordTextChildren, findsOneWidget);
   });
 
-   testWidgets('Should present password confirmation error', (WidgetTester tester) async {
+  testWidgets('Should present password confirmation error',
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     passwordConfirmationController.add(UiError.invalidField);
@@ -232,9 +230,33 @@ void main() {
     await tester.pump();
 
     final passwordTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Confirmar senha'), matching: find.byType(Text));
-        
-    expect(passwordTextChildren, findsOneWidget);
+        of: find.bySemanticsLabel('Confirmar senha'),
+        matching: find.byType(Text));
 
+    expect(passwordTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should enable button with fields are valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button with fields are invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(button.onPressed, isNull);
   });
 }
