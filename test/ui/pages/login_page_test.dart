@@ -119,7 +119,7 @@ void main() {
     expect(find.text('Campo inválido'), findsOneWidget);
   });
 
-    testWidgets('Should present error if email is empty',
+  testWidgets('Should present error if email is empty',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -143,7 +143,6 @@ void main() {
     expect(emailTextChildren, findsOneWidget);
   });
 
-
   testWidgets('Should present error if password is empty',
       (WidgetTester tester) async {
     await loadPage(tester);
@@ -154,7 +153,6 @@ void main() {
 
     expect(find.text('Campo obrigatório'), findsOneWidget);
   });
-
 
   testWidgets('Should present no error if password is valid',
       (WidgetTester tester) async {
@@ -168,7 +166,6 @@ void main() {
         of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
   });
-
 
   testWidgets('Should enable button with fields are valid',
       (WidgetTester tester) async {
@@ -202,7 +199,11 @@ void main() {
 
     await tester.pump();
 
-    await tester.tap(find.byType(RaisedButton));
+    final button = find.byType(RaisedButton);
+
+    await tester.ensureVisible(button);
+
+    await tester.tap(button);
 
     await tester.pump();
 
@@ -264,10 +265,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(Get.currentRoute, '/any_route');
-    expect(find.text('fake page'),findsOneWidget);
+    expect(find.text('fake page'), findsOneWidget);
   });
 
-   testWidgets('Should not navigate to other page', (WidgetTester tester) async {
+  testWidgets('Should not navigate to other page', (WidgetTester tester) async {
     await loadPage(tester);
 
     navigateToController.add('');
