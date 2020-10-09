@@ -155,9 +155,34 @@ void main() {
 
     final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
-        
+
     expect(emailTextChildren, findsOneWidget);
 
   });
 
+   testWidgets('Should present name error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    nameController.add(UiError.invalidField);
+
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    nameController.add(UiError.requiredField);
+
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    nameController.add(null);
+
+    await tester.pump();
+
+    final emailTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Nome'), matching: find.byType(Text));
+        
+    expect(emailTextChildren, findsOneWidget);
+
+  });
 }
