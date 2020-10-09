@@ -9,8 +9,6 @@ import 'package:ForDev/data/http/http_error.dart';
 import 'package:ForDev/domain/helpers/helpers.dart';
 import 'package:ForDev/domain/usecases/usecases.dart';
 
-
-
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
@@ -50,13 +48,13 @@ void main() {
       'password': params.password,
       'passwordConfirmation': params.passwordConfirmation,
     }));
+  });
 
-    test('Should throw UnexpectedError if HttpClient returns 400', () async {
-      mockHttpError(HttpError.badRequest);
+  test('Should throw UnexpectedError if HttpClient returns 400', () async {
+    mockHttpError(HttpError.badRequest);
 
-      final future = sut.add(params);
+    final future = sut.add(params);
 
-      expect(future, throwsA(DomainError.unexpected));
-    });
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
