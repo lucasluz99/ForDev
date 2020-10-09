@@ -3,6 +3,7 @@ enum UiError {
   invalidField,
   unexpected,
   invalidCredentials,
+  emailInUse,
 }
 
 extension DomainErrorExtension on UiError {
@@ -14,6 +15,8 @@ extension DomainErrorExtension on UiError {
         return 'Campo obrigatório';
       case UiError.invalidField:
         return 'Campo inválido';
+      case UiError.emailInUse:
+        return 'O email já está em uso';
       default:
         return 'Ocorreu um erro inesperado';
     }
