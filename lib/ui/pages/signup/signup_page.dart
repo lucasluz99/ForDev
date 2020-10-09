@@ -9,6 +9,10 @@ import '../pages.dart';
 import 'components/components.dart';
 
 class SignUpPage extends StatelessWidget {
+  final SignUpPresenter presenter;
+
+  const SignUpPage(this.presenter);
+
   void _hideKeyboard(BuildContext context) {
     final currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus) {
@@ -30,25 +34,28 @@ class SignUpPage extends StatelessWidget {
                 Headline1(text: 'Login'),
                 Padding(
                   padding: const EdgeInsets.all(32),
-                  child: Form(
-                    child: Column(
-                      children: [
-                        NameInput(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: EmailInput(),
-                        ),
-                        PasswordInput(),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 32, top: 10),
-                          child: PasswordConfirmationInput(),
-                        ),
-                        SignUpButton(),
-                        FlatButton.icon(
-                            icon: Icon(Icons.exit_to_app),
-                            label: Text(R.strings.addAccount),
-                            onPressed: () {})
-                      ],
+                  child: Provider(
+                    create: (_) => presenter,
+                    child: Form(
+                      child: Column(
+                        children: [
+                          NameInput(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: EmailInput(),
+                          ),
+                          PasswordInput(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 32, top: 10),
+                            child: PasswordConfirmationInput(),
+                          ),
+                          SignUpButton(),
+                          FlatButton.icon(
+                              icon: Icon(Icons.exit_to_app),
+                              label: Text(R.strings.addAccount),
+                              onPressed: () {})
+                        ],
+                      ),
                     ),
                   ),
                 )
