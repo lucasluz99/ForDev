@@ -1,3 +1,4 @@
+import 'package:ForDev/data/models/account_model.dart';
 import 'package:ForDev/data/usecases/usecases.dart';
 import 'package:ForDev/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
@@ -13,10 +14,11 @@ class RemoteAddAccount {
 
   RemoteAddAccount({@required this.httpClient, @required this.url});
 
-  Future<void> add(AddAccountParams params) async {
+  Future<AccountEntity> add(AddAccountParams params) async {
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
     try {
-      await httpClient.request(url: url, method: 'post', body: body);
+    final response = await httpClient.request(url: url, method: 'post', body: body);
+    return AccountModel.fromJson(response).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.forbidden
           ? DomainError.emailInUse
