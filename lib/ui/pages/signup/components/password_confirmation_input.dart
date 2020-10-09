@@ -6,7 +6,7 @@ import '../signup_presenter.dart';
 
 class PasswordConfirmationInput extends StatelessWidget {
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final presenter = Provider.of<SignUpPresenter>(context);
     return StreamBuilder<UiError>(
         stream: presenter.passwordConfirmationErrorStream,
@@ -15,6 +15,7 @@ class PasswordConfirmationInput extends StatelessWidget {
             obscureText: true,
             onChanged: presenter.validatePasswordConfirmation,
             decoration: InputDecoration(
+                errorText: snapshot.hasData ? snapshot.data.description : null,
                 icon: Icon(
                   Icons.email,
                   color: Theme.of(context).primaryColorLight,

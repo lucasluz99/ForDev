@@ -179,10 +179,62 @@ void main() {
 
     await tester.pump();
 
-    final emailTextChildren = find.descendant(
+    final nameTextChildren = find.descendant(
         of: find.bySemanticsLabel('Nome'), matching: find.byType(Text));
         
-    expect(emailTextChildren, findsOneWidget);
+    expect(nameTextChildren, findsOneWidget);
+
+  });
+
+    testWidgets('Should present password error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordController.add(UiError.invalidField);
+
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    passwordController.add(UiError.requiredField);
+
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    passwordController.add(null);
+
+    await tester.pump();
+
+    final passwordTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
+        
+    expect(passwordTextChildren, findsOneWidget);
+
+  });
+
+   testWidgets('Should present password confirmation error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordConfirmationController.add(UiError.invalidField);
+
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    passwordConfirmationController.add(UiError.requiredField);
+
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    passwordConfirmationController.add(null);
+
+    await tester.pump();
+
+    final passwordTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Confirmar senha'), matching: find.byType(Text));
+        
+    expect(passwordTextChildren, findsOneWidget);
 
   });
 }
