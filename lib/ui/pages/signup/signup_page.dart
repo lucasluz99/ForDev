@@ -32,6 +32,12 @@ class SignUpPage extends StatelessWidget {
           }
         });
 
+        presenter.navigateToStream.listen((page) {
+          if (page?.isNotEmpty == true) {
+            Get.offAllNamed(page);
+          }
+        });
+
         presenter.mainErrorStream.listen((UiError mainError) {
           if (mainError != null) {
             showErrorMessage(context, mainError.description);

@@ -323,4 +323,31 @@ void main() {
 
     expect(find.text('Ocorreu um erro inesperado'), findsOneWidget);
   });
+
+  testWidgets('Should navigate to another page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+    expect(find.text('fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not navigate to another page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+
+    await tester.pump();
+
+    expect(Get.currentRoute, '/signup');
+
+    navigateToController.add(null);
+
+    await tester.pump();
+
+    expect(Get.currentRoute, '/signup');
+  });
 }
