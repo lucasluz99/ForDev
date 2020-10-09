@@ -144,7 +144,7 @@ void main() {
   });
 
 
-  testWidgets('Should present error if email is empty',
+  testWidgets('Should present error if password is empty',
       (WidgetTester tester) async {
     await loadPage(tester);
 
