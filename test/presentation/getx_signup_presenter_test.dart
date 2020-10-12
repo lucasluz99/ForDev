@@ -105,7 +105,6 @@ void main() {
     sut.validateEmail(email);
   });
 
-
   test('Should call Validation with correct name', () {
     sut.validateName(name);
 
@@ -141,7 +140,47 @@ void main() {
     sut.isFormValidStream
         .listen(expectAsync1((isValid) => expect(isValid, false)));
 
-   sut.validateName(name);
-   sut.validateName(name);
+    sut.validateName(name);
+    sut.validateName(name);
+  });
+
+  test('Should call Validation with correct name', () {
+    sut.validateName(name);
+
+    verify(validation.validate(field: 'name', value: name)).called(1);
+  });
+
+  test('Should emit invalidFieldError if password is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
+
+  test('Should emit requiredFieldError if password is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
+
+  test('Should emit null if password validation succeeds', () {
+    sut.passwordErrorStream
+        .listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
   });
 }
