@@ -22,6 +22,7 @@ void main() {
   SaveCurrentAccount saveCurrentAccount;
   Authentication authentication;
   String email;
+  String name;
   String password;
   String token;
 
@@ -59,7 +60,7 @@ void main() {
     validation = MockValidation();
     saveCurrentAccount = MockSaveCurrentAccount();
     sut = GetxSignUpPresenter(validation: validation);
-
+    name = 'Lucas Luz';
     email = faker.internet.email();
     password = faker.internet.password();
     token = faker.guid.guid();
@@ -102,5 +103,45 @@ void main() {
 
     sut.validateEmail(email);
     sut.validateEmail(email);
+  });
+
+
+  test('Should call Validation with correct name', () {
+    sut.validateName(name);
+
+    verify(validation.validate(field: 'name', value: name)).called(1);
+  });
+
+  test('Should emit invalidFieldError if name is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+
+    sut.nameErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validateName(name);
+    sut.validateName(name);
+  });
+
+  test('Should emit requiredFieldError if name is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    sut.nameErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validateName(name);
+    sut.validateName(name);
+  });
+
+  test('Should emit null if name validation succeeds', () {
+    sut.nameErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+   sut.validateName(name);
+   sut.validateName(name);
   });
 }
