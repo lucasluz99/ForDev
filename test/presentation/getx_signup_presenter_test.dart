@@ -144,10 +144,10 @@ void main() {
     sut.validateName(name);
   });
 
-  test('Should call Validation with correct name', () {
-    sut.validateName(name);
+  test('Should call Validation with correct password', () {
+    sut.validatePassword(password);
 
-    verify(validation.validate(field: 'name', value: name)).called(1);
+    verify(validation.validate(field: 'password', value: password)).called(1);
   });
 
   test('Should emit invalidFieldError if password is invalid', () {
@@ -182,5 +182,46 @@ void main() {
 
     sut.validatePassword(password);
     sut.validatePassword(password);
+  });
+
+  test('Should call Validation with correct passwordConfirmation', () {
+    sut.validatePasswordConfirmation(password);
+
+    verify(validation.validate(field: 'passwordConfirmation', value: password))
+        .called(1);
+  });
+
+  test('Should emit invalidFieldError if passwordConfirmation is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePasswordConfirmation(password);
+    sut.validatePasswordConfirmation(password);
+  });
+
+  test('Should emit requiredFieldError if passwordConfirmation is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePasswordConfirmation(password);
+    sut.validatePasswordConfirmation(password);
+  });
+
+  test('Should emit null if passwordConfirmation validation succeeds', () {
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePasswordConfirmation(password);
+    sut.validatePasswordConfirmation(password);
   });
 }
