@@ -11,7 +11,15 @@ import '../protocols/validation.dart';
 
 class GetxSignUpPresenter extends GetxController {
   final Validation validation;
+  final AddAccount addAccount;
+  final SaveCurrentAccount saveCurrentAccount;
 
+  String _email;
+  String _name;
+  String _password;
+  String _passwordConfirmation;
+
+  var _isLoading = false.obs;
   var _emailError = Rx<UiError>();
   var _nameError = Rx<UiError>();
   var _passwordError = Rx<UiError>();
@@ -21,34 +29,51 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UiError> get emailErrorStream => _emailError.stream;
   Stream<UiError> get nameErrorStream => _nameError.stream;
   Stream<UiError> get passwordErrorStream => _passwordError.stream;
-  Stream<UiError> get passwordConfirmationErrorStream => _passwordConfirmationError.stream;
+  Stream<UiError> get passwordConfirmationErrorStream =>
+      _passwordConfirmationError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  Stream<bool> get isLoadingStream => _isLoading.stream;
 
   GetxSignUpPresenter({
     this.validation,
+    this.addAccount,
+    this.saveCurrentAccount,
   });
 
   void validateEmail(String email) {
+    _email = email;
     _emailError.value = _validateField(field: 'email', value: email);
     _validateForm();
   }
 
   void validateName(String name) {
+    _name = name;
     _nameError.value = _validateField(field: 'name', value: name);
     _validateForm();
   }
 
   void validatePassword(String password) {
+    _password = password;
     _passwordError.value = _validateField(field: 'password', value: password);
     _validateForm();
   }
+
   void validatePasswordConfirmation(String password) {
-      _passwordConfirmationError.value = _validateField(field: 'passwordConfirmation', value: password);
+    _passwordConfirmation = password;
+    _passwordConfirmationError.value =
+        _validateField(field: 'passwordConfirmation', value: password);
     _validateForm();
   }
-  
+
   void _validateForm() {
-    _isFormValid.value = false;
+    _isFormValid.value = _emailError.value == null &&
+        _nameError.value == null &&
+        _passwordError.value == null &&
+        _passwordConfirmationError.value == null &&
+        _email != null &&
+        _name != null &&
+        _password != null &&
+        _passwordConfirmation != null;
   }
 
   UiError _validateField({String field, String value}) {
@@ -61,6 +86,17 @@ class GetxSignUpPresenter extends GetxController {
       default:
         return null;
     }
+  }
+
+  Future<void> signUp() async {
+    final account = await addAccount.add(AddAccountParams(
+      email: _email,
+      name: _name,
+      password: _password,
+      passwordConfirmation: _passwordConfirmation,
+    ));
+
+    await saveCurrentAccount.save(account);
   }
 
   void dispose() {}

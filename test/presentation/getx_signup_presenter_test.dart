@@ -5,7 +5,6 @@ import 'package:test/test.dart';
 import 'package:ForDev/domain/usecases/usecases.dart';
 import 'package:ForDev/domain/helpers/domain_error.dart';
 import 'package:ForDev/domain/entities/entities.dart';
-import 'package:ForDev/domain/usecases/authentication.dart';
 
 import 'package:ForDev/ui/helpers/errors/errors.dart';
 
@@ -14,13 +13,15 @@ import 'package:ForDev/presentation/protocols/validation.dart';
 
 class MockValidation extends Mock implements Validation {}
 
+class MockAddAccount extends Mock implements AddAccount {}
+
 class MockSaveCurrentAccount extends Mock implements SaveCurrentAccount {}
 
 void main() {
   GetxSignUpPresenter sut;
   Validation validation;
+  AddAccount addAccount;
   SaveCurrentAccount saveCurrentAccount;
-  Authentication authentication;
   String email;
   String name;
   String password;
@@ -36,20 +37,20 @@ void main() {
     mockValidatationCall(field).thenReturn(value);
   }
 
-  PostExpectation mockAuthenticationCall() {
-    return when(authentication.auth(any));
+  PostExpectation mockAddAccountCall() {
+    return when(addAccount.add(any));
   }
 
   PostExpectation mockSaveCurrentAccountCall() {
-    return when(saveCurrentAccount.save(any));
+    return when(addAccount.add(any));
   }
 
-  void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAddAccount() {
+    mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
   }
 
-  void mockAuthenticationError(DomainError error) {
-    mockAuthenticationCall().thenThrow(error);
+  void mockAddAccountError(DomainError error) {
+    mockAddAccountCall().thenThrow(error);
   }
 
   void mockSaveCurrentAccountError() {
@@ -58,12 +59,19 @@ void main() {
 
   setUp(() {
     validation = MockValidation();
+    addAccount = MockAddAccount();
     saveCurrentAccount = MockSaveCurrentAccount();
-    sut = GetxSignUpPresenter(validation: validation);
+    sut = GetxSignUpPresenter(
+      validation: validation,
+      addAccount: addAccount,
+      saveCurrentAccount: saveCurrentAccount,
+    );
+
     name = 'Lucas Luz';
     email = faker.internet.email();
     password = faker.internet.password();
     token = faker.guid.guid();
+    mockAddAccount();
   });
 
   test('Should call Validation with correct email', () {
@@ -223,5 +231,45 @@ void main() {
 
     sut.validatePasswordConfirmation(password);
     sut.validatePasswordConfirmation(password);
+  });
+
+  test('Should enable button if all fields are valid', () async {
+    expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+    sut.validateEmail(email);
+    await Future.delayed(Duration.zero);
+    sut.validateName(name);
+    await Future.delayed(Duration.zero);
+    sut.validatePasswordConfirmation(password);
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+    await Future.delayed(Duration.zero);
+  });
+
+  test('Should call AddAccount with correct values', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(addAccount.add(AddAccountParams(
+      email: email,
+      name: name,
+      passwordConfirmation: password,
+      password: password,
+    ))).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
   });
 }
