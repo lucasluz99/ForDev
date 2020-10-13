@@ -105,8 +105,8 @@ class GetxSignUpPresenter extends GetxController {
       _navigateTo.value = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
-        case DomainError.invalidCredentials:
-          _mainError.value = UiError.invalidCredentials;
+        case DomainError.emailInUse:
+          _mainError.value = UiError.emailInUse;
           break;
         default:
           _mainError.value = UiError.unexpected;
