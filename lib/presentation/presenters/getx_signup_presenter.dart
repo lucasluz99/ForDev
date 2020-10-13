@@ -23,14 +23,18 @@ class GetxSignUpPresenter extends GetxController {
   var _emailError = Rx<UiError>();
   var _nameError = Rx<UiError>();
   var _passwordError = Rx<UiError>();
+  var _navigateTo = Rx<String>();
   var _passwordConfirmationError = Rx<UiError>();
+  var _mainError = Rx<UiError>();
   var _isFormValid = false.obs;
 
   Stream<UiError> get emailErrorStream => _emailError.stream;
   Stream<UiError> get nameErrorStream => _nameError.stream;
   Stream<UiError> get passwordErrorStream => _passwordError.stream;
+  Stream<UiError> get mainErrorStream => _mainError.stream;
   Stream<UiError> get passwordConfirmationErrorStream =>
       _passwordConfirmationError.stream;
+  Stream<String> get navigateToStream => _navigateTo.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
@@ -89,14 +93,26 @@ class GetxSignUpPresenter extends GetxController {
   }
 
   Future<void> signUp() async {
-    final account = await addAccount.add(AddAccountParams(
-      email: _email,
-      name: _name,
-      password: _password,
-      passwordConfirmation: _passwordConfirmation,
-    ));
-
-    await saveCurrentAccount.save(account);
+    try {
+      _isLoading.value = true;
+      final account = await addAccount.add(AddAccountParams(
+        email: _email,
+        name: _name,
+        password: _password,
+        passwordConfirmation: _passwordConfirmation,
+      ));
+      await saveCurrentAccount.save(account);
+      _navigateTo.value = '/surveys';
+    } on DomainError catch (error) {
+      switch (error) {
+        case DomainError.invalidCredentials:
+          _mainError.value = UiError.invalidCredentials;
+          break;
+        default:
+          _mainError.value = UiError.unexpected;
+      }
+      _isLoading.value = false;
+    }
   }
 
   void dispose() {}

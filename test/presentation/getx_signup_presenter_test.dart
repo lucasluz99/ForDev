@@ -33,16 +33,16 @@ void main() {
         value: anyNamed('value')));
   }
 
-  void mockValidation({String field, ValidationError value}) {
-    mockValidatationCall(field).thenReturn(value);
-  }
-
   PostExpectation mockAddAccountCall() {
     return when(addAccount.add(any));
   }
 
   PostExpectation mockSaveCurrentAccountCall() {
-    return when(addAccount.add(any));
+    return when(saveCurrentAccount.save(any));
+  }
+
+  void mockValidation({String field, ValidationError value}) {
+    mockValidatationCall(field).thenReturn(value);
   }
 
   void mockAddAccount() {
@@ -271,5 +271,42 @@ void main() {
     await sut.signUp();
 
     verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.unexpected)));
+
+    await sut.signUp();
+  });
+
+  test('Should emit correct events on AddAccount success', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingStream, emits(true));
+
+    await sut.signUp();
+  });
+
+  test('Should change page on success', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    sut.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/surveys')));
+
+    await sut.signUp();
   });
 }
