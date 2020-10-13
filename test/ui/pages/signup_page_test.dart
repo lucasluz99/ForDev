@@ -313,7 +313,7 @@ void main() {
     expect(find.text('O email já está em uso'), findsOneWidget);
   });
 
-   testWidgets('Should present error message if signUp throws',
+  testWidgets('Should present error message if signUp throws',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -335,7 +335,8 @@ void main() {
     expect(find.text('fake page'), findsOneWidget);
   });
 
-  testWidgets('Should not navigate to another page', (WidgetTester tester) async {
+  testWidgets('Should not navigate to another page',
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     navigateToController.add('');
@@ -349,5 +350,20 @@ void main() {
     await tester.pump();
 
     expect(Get.currentRoute, '/signup');
+  });
+
+  testWidgets('Should go to SignIn page when button has pressed',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final button = find.text('Fazer login');
+
+    await tester.ensureVisible(button);
+
+    await tester.tap(button);
+
+    await tester.pump();
+
+    verify(presenter.goToLogin()).called(1);
   });
 }

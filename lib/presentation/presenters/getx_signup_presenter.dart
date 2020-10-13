@@ -1,15 +1,17 @@
+
 import 'package:get/get.dart';
 
 import '../../domain/helpers/domain_error.dart';
+
+import '../../ui/pages/pages.dart';
 import '../../ui/helpers/errors/errors.dart';
 
-import '../../ui/pages/login/login_presenter.dart';
 
 import '../../domain/usecases/usecases.dart';
 
 import '../protocols/validation.dart';
 
-class GetxSignUpPresenter extends GetxController {
+class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -113,6 +115,10 @@ class GetxSignUpPresenter extends GetxController {
       }
       _isLoading.value = false;
     }
+  }
+
+  void goToLogin(){
+    _navigateTo.value = '/login';
   }
 
   void dispose() {}
