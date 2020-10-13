@@ -2,7 +2,7 @@ import 'package:ForDev/presentation/protocols/protocols.dart';
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 
-import 'package:ForDev/validation/validators/email_validation.dart';
+import 'package:ForDev/validation/validators/validators.dart';
 
 void main() {
   EmailValidation sut;
