@@ -1,4 +1,5 @@
 import 'package:faker/faker.dart';
+
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -310,6 +311,8 @@ void main() {
     await sut.signUp();
   });
 
+  
+
   test('Should emit correct events on EmailInUseError', () async {
     mockAddAccountError(DomainError.emailInUse);
     sut.validateEmail(email);
@@ -319,8 +322,8 @@ void main() {
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
 
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UiError.emailInUse)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.emailInUse)));
 
     await sut.signUp();
   });
@@ -331,8 +334,8 @@ void main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UiError.unexpected)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await sut.signUp();
   });

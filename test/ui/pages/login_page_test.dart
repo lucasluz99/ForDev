@@ -210,6 +210,24 @@ void main() {
     verify(presenter.auth()).called(1);
   });
 
+   testWidgets('Should go to SignUp page when button has pressed',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+
+    final button = find.text('Criar conta');
+
+    await tester.ensureVisible(button);
+
+    await tester.tap(button);
+
+    await tester.pump();
+
+    verify(presenter.goToSignUp()).called(1);
+  });
+
+  
+
   testWidgets('Should present progress indicator on loading',
       (WidgetTester tester) async {
     await loadPage(tester);

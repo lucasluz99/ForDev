@@ -183,8 +183,8 @@ void main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UiError.unexpected)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await sut.auth();
   });
@@ -208,6 +208,13 @@ void main() {
     await sut.auth();
   });
 
+  test('Should go to SignUpPage on link click', () async {
+    sut.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/signup')));
+
+    sut.goToSignUp();
+  });
+
   test('Should emit correct events on InvalidCredentialsError', () async {
     mockAuthenticationError(DomainError.invalidCredentials);
     sut.validateEmail(email);
@@ -227,8 +234,8 @@ void main() {
     sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UiError.unexpected)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await sut.auth();
   });
