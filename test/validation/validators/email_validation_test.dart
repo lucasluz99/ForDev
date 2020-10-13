@@ -8,23 +8,33 @@ void main() {
   EmailValidation sut;
 
   setUp(() {
-    sut = EmailValidation('any');
+    sut = EmailValidation('email');
   });
 
   test('Should return null if email is empty', () {
-    final error = sut.validate('');
+    final formData = {
+      'email': ''
+    };
+    
+    final error = sut.validate(formData);
 
     expect(error, null);
   });
 
   test('Should return null if email is valid', () {
-    final error = sut.validate(faker.internet.email());
+     final formData = {
+      'email': 'lucas@gmail.com'
+    };
+    final error = sut.validate(formData);
 
     expect(error, null);
   });
 
   test('Should return error if email is invalid', () {
-    final error = sut.validate('12@');
+     final formData = {
+      'email': 'lu@12'
+    };
+    final error = sut.validate(formData);
 
     expect(error, ValidationError.invalidField);
   });

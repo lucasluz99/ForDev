@@ -31,7 +31,7 @@ void main() {
   PostExpectation mockValidatationCall(String field) {
     return when(validation.validate(
         field: field == null ? anyNamed('field') : field,
-        value: anyNamed('value')));
+        input: anyNamed('input')));
   }
 
   PostExpectation mockAddAccountCall() {
@@ -76,9 +76,15 @@ void main() {
   });
 
   test('Should call Validation with correct email', () {
+    final formData = {
+      'name': null,
+      'email': email,
+      'password': null,
+      'passwordConfirmation': null
+    };
     sut.validateEmail(email);
 
-    verify(validation.validate(field: 'email', value: email)).called(1);
+    verify(validation.validate(field: 'email', input: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -115,9 +121,15 @@ void main() {
   });
 
   test('Should call Validation with correct name', () {
+    final formData = {
+      'name': name,
+      'email': null,
+      'password': null,
+      'passwordConfirmation': null
+    };
     sut.validateName(name);
 
-    verify(validation.validate(field: 'name', value: name)).called(1);
+    verify(validation.validate(field: 'name', input: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if name is invalid', () {
@@ -154,9 +166,15 @@ void main() {
   });
 
   test('Should call Validation with correct password', () {
+    final formData = {
+      'name': null,
+      'email': null,
+      'password': password,
+      'passwordConfirmation': null
+    };
     sut.validatePassword(password);
 
-    verify(validation.validate(field: 'password', value: password)).called(1);
+    verify(validation.validate(field: 'password', input: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if password is invalid', () {
@@ -194,9 +212,15 @@ void main() {
   });
 
   test('Should call Validation with correct passwordConfirmation', () {
+    final formData = {
+      'name': null,
+      'email': null,
+      'password': null,
+      'passwordConfirmation': password
+    };
     sut.validatePasswordConfirmation(password);
 
-    verify(validation.validate(field: 'passwordConfirmation', value: password))
+    verify(validation.validate(field: 'passwordConfirmation', input: formData))
         .called(1);
   });
 
@@ -311,8 +335,6 @@ void main() {
     await sut.signUp();
   });
 
-  
-
   test('Should emit correct events on EmailInUseError', () async {
     mockAddAccountError(DomainError.emailInUse);
     sut.validateEmail(email);
@@ -340,9 +362,8 @@ void main() {
     await sut.signUp();
   });
 
-   test('Should go to LoginPage on link click', () async {
-    sut.navigateToStream
-        .listen(expectAsync1((page) => expect(page, '/login')));
+  test('Should go to LoginPage on link click', () async {
+    sut.navigateToStream.listen(expectAsync1((page) => expect(page, '/login')));
 
     sut.goToLogin();
   });

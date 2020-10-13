@@ -1,11 +1,9 @@
-
 import 'package:get/get.dart';
 
 import '../../domain/helpers/domain_error.dart';
 
 import '../../ui/pages/pages.dart';
 import '../../ui/helpers/errors/errors.dart';
-
 
 import '../../domain/usecases/usecases.dart';
 
@@ -48,26 +46,25 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = _validateField(field: 'email', value: email);
+    _emailError.value = _validateField('email');
     _validateForm();
   }
 
   void validateName(String name) {
     _name = name;
-    _nameError.value = _validateField(field: 'name', value: name);
+    _nameError.value = _validateField('name');
     _validateForm();
   }
 
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = _validateField(field: 'password', value: password);
+    _passwordError.value = _validateField('password');
     _validateForm();
   }
 
   void validatePasswordConfirmation(String password) {
     _passwordConfirmation = password;
-    _passwordConfirmationError.value =
-        _validateField(field: 'passwordConfirmation', value: password);
+    _passwordConfirmationError.value = _validateField('passwordConfirmation');
     _validateForm();
   }
 
@@ -82,8 +79,14 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
         _passwordConfirmation != null;
   }
 
-  UiError _validateField({String field, String value}) {
-    final error = validation.validate(field: field, value: value);
+  UiError _validateField(String field) {
+    final formData = {
+      'email': _email,
+      'name': _name,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation
+    };
+    final error = validation.validate(field: field, input: formData);
     switch (error) {
       case ValidationError.invalidField:
         return UiError.invalidField;
@@ -117,7 +120,7 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     }
   }
 
-  void goToLogin(){
+  void goToLogin() {
     _navigateTo.value = '/login';
   }
 

@@ -9,19 +9,28 @@ void main() {
     sut = RequiredFieldValidation('any');
   });
   test('Should return null if value is not empty', () {
-    final error = sut.validate('any');
+     final formData = {
+      'any' : 'abcde'
+    };
+    final error = sut.validate(formData);
 
     expect(error, null);
   });
 
   test('Should return error if value is  empty', () {
-    final error = sut.validate('');
+     final formData = {
+      'any' : ''
+    };
+    final error = sut.validate(formData);
 
     expect(error, ValidationError.requiredField);
   });
 
   test('Should return error if value is null', () {
-    final error = sut.validate(null);
+     final formData = {
+      'any' : null
+    };
+    final error = sut.validate(formData);
 
     expect(error, ValidationError.requiredField);
   });

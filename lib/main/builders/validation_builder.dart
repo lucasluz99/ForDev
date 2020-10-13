@@ -8,7 +8,7 @@ class ValidationBuilder {
 
   ValidationBuilder._();
 
-  static ValidationBuilder field(String fieldName){
+  static ValidationBuilder field(String fieldName) {
     _instance = ValidationBuilder._();
     _instance.fieldName = fieldName;
     return _instance;
@@ -19,12 +19,19 @@ class ValidationBuilder {
     return this;
   }
 
-   ValidationBuilder email() {
+  ValidationBuilder email() {
     validations.add(EmailValidation(fieldName));
     return this;
   }
-   ValidationBuilder min(int size) {
-    validations.add(MinLengthValidation(field:fieldName,size:size));
+
+  ValidationBuilder min(int size) {
+    validations.add(MinLengthValidation(field: fieldName, size: size));
+    return this;
+  }
+
+  ValidationBuilder sameAs(String fieldToCompare) {
+    validations.add(CompareFieldsValidation(
+        field: fieldName, fieldToCompare: fieldToCompare,));
     return this;
   }
 

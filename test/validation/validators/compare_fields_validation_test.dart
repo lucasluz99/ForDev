@@ -8,19 +8,28 @@ void main() {
 
   setUp(() {
     sut = CompareFieldsValidation(
-      field: 'any',
-      valueToCompare: 'any',
+      field: 'any_field',
+      fieldToCompare: 'other_field',
     );
   });
 
   test('Should return error if values are differents', () {
-    final error = sut.validate('wrong_value');
+    final formData = {
+      'any_field': 'any',
+      'other_field': 'other'
+    };
+
+    final error = sut.validate(formData);
 
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return null if values are equal', () {
-    final error = sut.validate('any');
+    final formData = {
+      'any_field': 'any',
+      'other_field': 'any'
+    };
+    final error = sut.validate(formData);
 
     expect(error, null);
   });
