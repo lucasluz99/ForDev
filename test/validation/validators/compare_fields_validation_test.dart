@@ -1,7 +1,6 @@
-import 'package:ForDev/presentation/protocols/protocols.dart';
-import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 
+import 'package:ForDev/presentation/protocols/protocols.dart';
 import 'package:ForDev/validation/validators/validators.dart';
 
 void main() {
@@ -25,6 +24,4 @@ void main() {
 
     expect(error, null);
   });
-
-
 }
