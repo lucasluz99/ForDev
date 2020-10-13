@@ -1,4 +1,6 @@
 import 'package:meta/meta.dart';
+
+import '../../presentation/presentation.dart';
 import '../protocols/protocols.dart';
 
 class MinLengthValidation implements FieldValidation {
