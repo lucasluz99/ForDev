@@ -324,4 +324,16 @@ void main() {
 
     await sut.signUp();
   });
+
+  test('Should emit correct events on UnexpectedError', () async {
+    mockAddAccountError(DomainError.unexpected);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream.listen(
+        expectAsync1((error) => expect(error, UiError.unexpected)));
+
+    await sut.signUp();
+  });
 }
