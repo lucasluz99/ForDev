@@ -9,7 +9,7 @@ import 'package:ForDev/data/http/http_error.dart';
 import 'package:ForDev/domain/helpers/helpers.dart';
 import 'package:ForDev/domain/usecases/usecases.dart';
 
-class MockHttpClient extends Mock implements HttpClient {}
+class MockHttpClient extends Mock implements HttpClient<Map> {}
 
 void main() {
   RemoteAddAccount sut;
