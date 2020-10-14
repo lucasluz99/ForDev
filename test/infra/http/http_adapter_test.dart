@@ -93,7 +93,7 @@ void main() {
     });
 
     test('Should return BadRequestError if post returns 400', () async {
-      mockResponse(400,body: '');
+      mockResponse(400, body: '');
 
       final future = sut.request(url: url, method: 'post');
 
@@ -105,14 +105,6 @@ void main() {
       final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.badRequest));
-    });
-
-    test('Should return UnauthorizedError if post returns 401', () async {
-      mockResponse(401,body: '');
-
-      final future = sut.request(url: url, method: 'post');
-
-      expect(future, throwsA(HttpError.unauthorized));
     });
 
     test('Should return UnauthorizedError if post returns 401', () async {
@@ -198,7 +190,7 @@ void main() {
 
     test('Should return null if get returns 204 with no data', () async {
       mockResponse(204, body: '');
-     
+
       final result = await sut.request(url: url, method: 'get');
 
       expect(result, null);
@@ -206,14 +198,14 @@ void main() {
 
     test('Should return null if get returns 204 with data', () async {
       mockResponse(204);
-     
+
       final result = await sut.request(url: url, method: 'get');
 
       expect(result, null);
     });
- 
+
     test('Should return BadRequestError if get returns 400', () async {
-      mockResponse(400,body: '');
+      mockResponse(400, body: '');
 
       final future = sut.request(url: url, method: 'get');
 
@@ -225,6 +217,14 @@ void main() {
       final future = sut.request(url: url, method: 'get');
 
       expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return UnauthorizedError if get returns 401', () async {
+      mockResponse(401);
+
+      final future = sut.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.unauthorized));
     });
   });
 }
