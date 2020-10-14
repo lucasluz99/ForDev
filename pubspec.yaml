@@ -17,7 +17,8 @@ dependencies:
   equatable:
   provider:
   get:
-  flutter_secure_storage: 
+  flutter_secure_storage:
+  carousel_slider: 
   cupertino_icons: ^0.1.3
   
 dev_dependencies:
