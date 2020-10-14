@@ -61,8 +61,6 @@ void main() {
     });
 
     test('Should return data if post returns 200', () async {
-      await sut.request(url: url, method: 'post');
-
       final result = await sut.request(url: url, method: 'post');
 
       expect(result, {'any': 'any'});
@@ -70,7 +68,6 @@ void main() {
 
     test('Should return null if post returns 200 with no data', () async {
       mockResponse(200, body: '');
-      await sut.request(url: url, method: 'post');
 
       final result = await sut.request(url: url, method: 'post');
 
@@ -175,6 +172,22 @@ void main() {
             'accept': 'application/json'
           },
           ));
+    });
+
+     test('Should return data if get returns 200', () async {
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, {'any': 'any'});
+    });
+
+    test('Should return null if get returns 200 with no data', () async {
+      mockResponse(200,body: '');
+
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, null);
     });
   });
 }
