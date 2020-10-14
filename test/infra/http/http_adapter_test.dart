@@ -19,13 +19,14 @@ void main() {
     url = faker.internet.httpUrl();
   });
 
-   group('shared', () {
-     test('Should throw ServerError with invalid method is provided', () async {
-     final future =  sut.request(url: url, method: 'invalid_method', body: {'any': 'any'});
+  group('shared', () {
+    test('Should throw ServerError with invalid method is provided', () async {
+      final future =
+          sut.request(url: url, method: 'invalid_method', body: {'any': 'any'});
 
-     expect(future,throwsA(HttpError.serverError));
+      expect(future, throwsA(HttpError.serverError));
     });
-   });
+  });
 
   group('post', () {
     PostExpectation mockRequest() => when(
@@ -35,7 +36,7 @@ void main() {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
 
-     void mockError() {
+    void mockError() {
       mockRequest().thenThrow(Exception());
     }
 
@@ -118,7 +119,7 @@ void main() {
       expect(future, throwsA(HttpError.unauthorized));
     });
 
-     test('Should return ForbiddenError if post returns 403', () async {
+    test('Should return ForbiddenError if post returns 403', () async {
       mockResponse(403);
 
       final future = sut.request(url: url, method: 'post');
@@ -126,8 +127,7 @@ void main() {
       expect(future, throwsA(HttpError.forbidden));
     });
 
-
-     test('Should return NotFoundError if post returns 404', () async {
+    test('Should return NotFoundError if post returns 404', () async {
       mockResponse(404);
 
       final future = sut.request(url: url, method: 'post');
@@ -142,13 +142,39 @@ void main() {
       expect(future, throwsA(HttpError.serverError));
     });
 
-
     test('Should return ServerError if post throws', () async {
       mockError();
 
       final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.serverError));
+    });
+  });
+
+  group('get', () {
+    PostExpectation mockRequest() => when(
+        client.get(any, headers: anyNamed('headers')));
+
+    void mockResponse(int statusCode, {String body = '{"any":"any"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+
+    void mockError() {
+      mockRequest().thenThrow(Exception());
+    }
+
+    setUp(() {
+      mockResponse(200);
+    });
+    test('Should call get with corret values', () async {
+      await sut.request(url: url, method: 'get');
+
+      verify(client.get(url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          ));
     });
   });
 }
