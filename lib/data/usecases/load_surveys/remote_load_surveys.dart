@@ -16,7 +16,7 @@ class RemoteLoadSurveys {
           .map((survey) => RemoteSurveyModel.fromJson(survey).toEntity())
           .toList();
     } on HttpError catch (error) {
-      throw DomainError.unexpected;
+     return  throw error == HttpError.forbidden ? DomainError.accessDenied :  DomainError.unexpected;
     }
   }
 
