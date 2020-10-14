@@ -149,8 +149,8 @@ void main() {
   });
 
   group('get', () {
-    PostExpectation mockRequest() => when(
-        client.get(any, headers: anyNamed('headers')));
+    PostExpectation mockRequest() =>
+        when(client.get(any, headers: anyNamed('headers')));
 
     void mockResponse(int statusCode, {String body = '{"any":"any"}'}) {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
@@ -166,24 +166,41 @@ void main() {
     test('Should call get with corret values', () async {
       await sut.request(url: url, method: 'get');
 
-      verify(client.get(url,
-          headers: {
-            'content-type': 'application/json',
-            'accept': 'application/json'
-          },
-          ));
+      verify(client.get(
+        url,
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json'
+        },
+      ));
     });
 
-     test('Should return data if get returns 200', () async {
-
+    test('Should return data if get returns 200', () async {
       final result = await sut.request(url: url, method: 'get');
 
       expect(result, {'any': 'any'});
     });
 
     test('Should return null if get returns 200 with no data', () async {
-      mockResponse(200,body: '');
+      mockResponse(200, body: '');
 
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, null);
+    });
+
+    test('Should return null if get returns 204 with no data', () async {
+      mockResponse(204, body: '');
+     
+
+      final result = await sut.request(url: url, method: 'get');
+
+      expect(result, null);
+    });
+
+    test('Should return null if get returns 204 with data', () async {
+      mockResponse(204);
+     
 
       final result = await sut.request(url: url, method: 'get');
 
