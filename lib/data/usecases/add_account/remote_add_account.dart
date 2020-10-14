@@ -8,7 +8,7 @@ import '../../../domain/usecases/usecases.dart';
 
 import '../../http/http.dart';
 
-class RemoteAddAccount {
+class RemoteAddAccount implements AddAccount {
   final HttpClient httpClient;
   final String url;
 
