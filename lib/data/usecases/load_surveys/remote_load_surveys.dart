@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../../../domain/helpers/helpers.dart';
 import '../../../domain/entities/entities.dart';
 import '../../models/models.dart';
 import '../../http/http.dart';
@@ -9,10 +10,14 @@ class RemoteLoadSurveys {
   final String url;
 
   Future<List<SurveyEntity>> load() async {
-    final response = await httpClient.request(url: url, method: 'get');
-    return response
-        .map((survey) => RemoteSurveyModel.fromJson(survey).toEntity())
-        .toList();
+    try {
+      final response = await httpClient.request(url: url, method: 'get');
+      return response
+          .map((survey) => RemoteSurveyModel.fromJson(survey).toEntity())
+          .toList();
+    } on HttpError catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 
   RemoteLoadSurveys({@required this.httpClient, @required this.url});
