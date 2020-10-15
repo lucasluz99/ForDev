@@ -26,7 +26,7 @@ void main() {
         SurveyViewModel(
             id: faker.guid.guid(),
             question: 'Question 2',
-            date: '20 nov 2020',
+            date: '21 nov 2020',
             didAnswer: false),
       ];
 
@@ -125,6 +125,8 @@ void main() {
     expect(find.text('Ocorreu um erro inesperado'), findsNothing);
     expect(find.text('Recarregar'), findsNothing);
     expect(find.text('Question 1'), findsWidgets);
-     expect(find.text('Question 2'), findsWidgets);
+    expect(find.text('Question 2'), findsWidgets);
+    expect(find.text('20 nov 2020'), findsWidgets);
+    expect(find.text('21 nov 2020'), findsWidgets);
   });
 }

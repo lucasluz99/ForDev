@@ -13,7 +13,9 @@ class SurveyItem extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-          color: Theme.of(context).secondaryHeaderColor,
+          color: viewModel.didAnswer
+              ? Theme.of(context).secondaryHeaderColor
+              : Theme.of(context).primaryColorDark,
           borderRadius: BorderRadius.all(Radius.circular(12))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
