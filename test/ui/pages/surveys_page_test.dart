@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,9 +12,29 @@ class MockSurveysPresenter extends Mock implements SurveysPresenter {}
 
 void main() {
   final presenter = MockSurveysPresenter();
+  StreamController<bool> isLoadingController;
+
+  void initStreams() {
+    isLoadingController = StreamController<bool>();
+  }
+
+  void closeStreams() {
+    isLoadingController.close();
+  }
+
+  void mockStreams() {
+    when(presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
+  }
+
+  tearDown(() {
+    closeStreams();
+  });
+
   Future<void> loadPage(WidgetTester tester) async {
     // presenter = MockSurveysPresenter();
-
+    initStreams();
+    mockStreams();
     final surveysPage = GetMaterialApp(
       initialRoute: '/surveys',
       getPages: [
@@ -33,5 +55,30 @@ void main() {
     await loadPage(tester);
 
     verify(presenter.loadData()).called(1);
+  });
+
+  testWidgets('Should present progress indicator on loading',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    isLoadingController.add(false);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
