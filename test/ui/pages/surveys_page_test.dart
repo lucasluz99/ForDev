@@ -15,7 +15,7 @@ class MockSurveysPresenter extends Mock implements SurveysPresenter {}
 void main() {
   final presenter = MockSurveysPresenter();
   StreamController<bool> isLoadingController;
-  StreamController<List<SurveyViewModel>> loadSurveysController;
+  StreamController<List<SurveyViewModel>> surveysController;
 
   List<SurveyViewModel> makeSurveys() => [
         SurveyViewModel(
@@ -32,19 +32,18 @@ void main() {
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
-    loadSurveysController = StreamController<List<SurveyViewModel>>();
+    surveysController = StreamController<List<SurveyViewModel>>();
   }
 
   void closeStreams() {
     isLoadingController.close();
-    loadSurveysController.close();
+    surveysController.close();
   }
 
   void mockStreams() {
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(presenter.loadSurveysStream)
-        .thenAnswer((_) => loadSurveysController.stream);
+    when(presenter.surveysStream).thenAnswer((_) => surveysController.stream);
   }
 
   tearDown(() {
@@ -106,7 +105,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.addError(UiError.unexpected.description);
+    surveysController.addError(UiError.unexpected.description);
 
     await tester.pump();
 
@@ -118,7 +117,7 @@ void main() {
   testWidgets('Should present list on loadSurveysStream success',
       (WidgetTester tester) async {
     await loadPage(tester);
-    loadSurveysController.add(makeSurveys());
+    surveysController.add(makeSurveys());
 
     await tester.pump();
 
@@ -134,7 +133,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.addError(UiError.unexpected.description);
+    surveysController.addError(UiError.unexpected.description);
 
     await tester.pump();
 
