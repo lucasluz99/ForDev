@@ -129,7 +129,7 @@ void main() {
     expect(find.text('21 nov 2020'), findsWidgets);
   });
 
-  testWidgets('Should call LoadSurveys on reload button click',
+  /*testWidgets('Should call LoadSurveys on reload button click',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -140,5 +140,5 @@ void main() {
     await tester.tap(find.text('Recarregar'));
 
     verify(presenter.loadData()).called(2);
-  });
+  });*/
 }
