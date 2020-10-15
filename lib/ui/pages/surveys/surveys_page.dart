@@ -29,27 +29,31 @@ class SurveysPage extends StatelessWidget {
         return StreamBuilder<List<SurveyViewModel>>(
             stream: presenter.loadSurveysStream,
             builder: (context, snapshot) {
-              if(snapshot.hasError){
+              if (snapshot.hasError) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(snapshot.error),
-                    RaisedButton(child: Text('Recarregar'),onPressed: () {},)
+                    RaisedButton(
+                      child: Text('Recarregar'),
+                      onPressed: () {},
+                    )
                   ],
                 );
               }
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: CarouselSlider(
-                  options:
-                      CarouselOptions(enlargeCenterPage: true, aspectRatio: 1),
-                  items: [
-                    SurveyItem(),
-                    SurveyItem(),
-                    SurveyItem(),
-                  ],
-                ),
-              );
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                        enlargeCenterPage: true, aspectRatio: 1),
+                    items: snapshot.data
+                        .map((surveyViewModel) => SurveyItem(surveyViewModel))
+                        .toList(),
+                  ),
+                );
+              }
+              return Container();
             });
       }),
     );
