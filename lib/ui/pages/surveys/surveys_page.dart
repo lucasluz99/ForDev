@@ -36,7 +36,7 @@ class SurveysPage extends StatelessWidget {
                     Text(snapshot.error),
                     RaisedButton(
                       child: Text('Recarregar'),
-                      onPressed: () {},
+                      onPressed: presenter.loadData,
                     )
                   ],
                 );
