@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../components/components.dart';
 import './components/components.dart';
 import './surveys_presenter.dart';
+import './survey_viewmodel.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter presenter;
@@ -17,7 +18,6 @@ class SurveysPage extends StatelessWidget {
         title: Text('Enquetes'),
       ),
       body: Builder(builder: (context) {
-
         presenter.isLoadingStream.listen((isLoading) {
           if (isLoading == true) {
             showLoading(context);
@@ -26,17 +26,31 @@ class SurveysPage extends StatelessWidget {
           }
         });
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          child: CarouselSlider(
-            options: CarouselOptions(enlargeCenterPage: true, aspectRatio: 1),
-            items: [
-              SurveyItem(),
-              SurveyItem(),
-              SurveyItem(),
-            ],
-          ),
-        );
+        return StreamBuilder<List<SurveyViewModel>>(
+            stream: presenter.loadSurveysStream,
+            builder: (context, snapshot) {
+              if(snapshot.hasError){
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(snapshot.error),
+                    RaisedButton(child: Text('Recarregar'),onPressed: () {},)
+                  ],
+                );
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: CarouselSlider(
+                  options:
+                      CarouselOptions(enlargeCenterPage: true, aspectRatio: 1),
+                  items: [
+                    SurveyItem(),
+                    SurveyItem(),
+                    SurveyItem(),
+                  ],
+                ),
+              );
+            });
       }),
     );
   }
