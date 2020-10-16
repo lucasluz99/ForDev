@@ -21,7 +21,9 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     Map body,
   }) async {
     final token = await fetchSecureCacheStorage.fetchSecure('token');
-    final authorizedHeaders = {'x-access-token': token};
+
+    final authorizedHeaders = headers ?? {}..addAll({'x-access-token': token});
+    
     decoratee.request(
         url: url, method: method, body: body, headers: authorizedHeaders);
   }
@@ -75,5 +77,14 @@ void main() {
         method: method,
         body: body,
         headers: {'x-access-token': token})).called(1);
+
+    await sut
+        .request(url: url, method: method, body: body, headers: {'any': 'any'});
+
+    verify(httpClient.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'x-access-token': token, 'any': 'any'})).called(1);
   });
 }
