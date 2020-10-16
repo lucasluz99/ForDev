@@ -1,4 +1,5 @@
 import 'package:ForDev/data/cache/cache.dart';
+import 'package:ForDev/data/http/http.dart';
 import 'package:faker/faker.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
@@ -20,13 +21,17 @@ class AuthorizeHttpClientDecorator implements HttpClient {
     Map headers,
     Map body,
   }) async {
-    final token = await fetchSecureCacheStorage.fetchSecure('token');
+    try {
+      final token = await fetchSecureCacheStorage.fetchSecure('token');
 
-    final authorizedHeaders = headers ?? {}
-      ..addAll({'x-access-token': token});
+      final authorizedHeaders = headers ?? {}
+        ..addAll({'x-access-token': token});
 
-   return decoratee.request(
-        url: url, method: method, body: body, headers: authorizedHeaders);
+      return decoratee.request(
+          url: url, method: method, body: body, headers: authorizedHeaders);
+    } catch (error) {
+      throw HttpError.forbidden;
+    }
   }
 }
 
@@ -50,6 +55,10 @@ void main() {
 
   void mockFetchSecureCacheStorage() {
     mockFetchSecureCall().thenAnswer((_) async => token);
+  }
+
+  void mockFetchSecureCacheStorageError() {
+    mockFetchSecureCall().thenThrow(Exception());
   }
 
   PostExpectation mockHttpClientCall() => when(httpClient.request(
@@ -106,5 +115,14 @@ void main() {
     final response = await sut.request(url: url, method: method, body: body);
 
     expect(response, httpResponse);
+  });
+
+  test('Should throw ForbiddenError if FetchSecureCacheStorage throws',
+      () async {
+    mockFetchSecureCacheStorageError();
+
+    final response = sut.request(url: url, method: method, body: body);
+
+    expect(response, throwsA(HttpError.forbidden));
   });
 }
