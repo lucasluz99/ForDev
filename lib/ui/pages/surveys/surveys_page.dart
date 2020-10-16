@@ -12,7 +12,6 @@ class SurveysPage extends StatelessWidget {
   SurveysPage(this.presenter);
   @override
   Widget build(BuildContext context) {
-    presenter.loadData();
     return Scaffold(
       appBar: AppBar(
         title: Text('Enquetes'),
@@ -25,6 +24,8 @@ class SurveysPage extends StatelessWidget {
             hideLoading(context);
           }
         });
+
+        presenter.loadData();
 
         return StreamBuilder<List<SurveyViewModel>>(
             stream: presenter.surveysStream,
@@ -40,15 +41,22 @@ class SurveysPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 17),
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         child: RaisedButton(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text('Recarregar'),
-                              SizedBox(width: 5,),
-                              Icon(Icons.replay,size: 20,)
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.replay,
+                                size: 20,
+                              )
                             ],
                           ),
                           onPressed: presenter.loadData,
