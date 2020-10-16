@@ -1,7 +1,8 @@
-import 'package:ForDev/data/usecases/usecases.dart';
+
+import 'package:ForDev/main/factories/pages/surveys/surveys_presenter_factory.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../ui/pages/pages.dart';
-import '../../factories.dart';
 
-Widget makeSurveysPage() => SurveysPage(null);
+
+Widget makeSurveysPage() => SurveysPage(makeGetxSurveysPresenter());
