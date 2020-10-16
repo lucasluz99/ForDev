@@ -4,5 +4,5 @@ import '../factories.dart';
 
 
 RemoteLoadSurveys makeRemoteLoadSurveys() {
-  return RemoteLoadSurveys(httpClient: makeHttpAdapter(), url: 'surveys');
+  return RemoteLoadSurveys(httpClient: makeAuthorizeHttpClientDecorator(), url: makeApiUrl('surveys'));
 }
