@@ -52,6 +52,20 @@ void main() {
             'accept': 'application/json'
           },
           body: '{"any":"any"}'));
+
+      await sut.request(
+          url: url,
+          method: 'post',
+          body: {'any': 'any'},
+          headers: {'any_header': 'any_header'});
+
+      verify(client.post(url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_header'
+          },
+          body: '{"any":"any"}'));
     });
 
     test('Should call post without body', () async {
@@ -172,6 +186,21 @@ void main() {
           'accept': 'application/json'
         },
       ));
+
+      await sut.request(
+          url: url,
+          method: 'get',
+          body: {'any': 'any'},
+          headers: {'any_header': 'any_header'});
+
+      verify(client.get(
+        url,
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+          'any_header': 'any_header'
+        },
+      ));
     });
 
     test('Should return data if get returns 200', () async {
@@ -226,7 +255,7 @@ void main() {
 
       expect(future, throwsA(HttpError.unauthorized));
     });
-  
+
     test('Should return ForbiddenError if get returns 403', () async {
       mockResponse(403);
 
@@ -234,7 +263,7 @@ void main() {
 
       expect(future, throwsA(HttpError.forbidden));
     });
-  
+
     test('Should return NotFoundError if get returns 404', () async {
       mockResponse(404);
 
@@ -242,16 +271,16 @@ void main() {
 
       expect(future, throwsA(HttpError.notFound));
     });
-  
-     test('Should return ServerError if get returns 500', () async {
+
+    test('Should return ServerError if get returns 500', () async {
       mockResponse(500);
 
       final future = sut.request(url: url, method: 'get');
 
       expect(future, throwsA(HttpError.serverError));
     });
-  
-     test('Should return ServerError if get throws', () async {
+
+    test('Should return ServerError if get throws', () async {
       mockError();
 
       final future = sut.request(url: url, method: 'get');
