@@ -1,41 +1,14 @@
-import 'package:ForDev/data/cache/cache.dart';
-import 'package:ForDev/data/http/http.dart';
-import 'package:faker/faker.dart';
-import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+import 'package:faker/faker.dart';
+
 import 'package:ForDev/data/http/http_client.dart';
+import 'package:ForDev/data/cache/cache.dart';
+import 'package:ForDev/data/http/http.dart';
 
-class AuthorizeHttpClientDecorator implements HttpClient {
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-  final HttpClient decoratee;
+import 'package:ForDev/main/decorators/decorators.dart';
 
-  AuthorizeHttpClientDecorator({
-    @required this.decoratee,
-    @required this.fetchSecureCacheStorage,
-  });
 
-  Future<dynamic> request({
-    @required String url,
-    @required String method,
-    Map headers,
-    Map body,
-  }) async {
-    try {
-      final token = await fetchSecureCacheStorage.fetchSecure('token');
-
-      final authorizedHeaders = headers ?? {}
-        ..addAll({'x-access-token': token});
-
-      return decoratee.request(
-          url: url, method: method, body: body, headers: authorizedHeaders);
-    } on HttpError {
-      rethrow;
-    } catch (error) {
-      throw HttpError.forbidden;
-    }
-  }
-}
 
 class MockHttpClient extends Mock implements HttpClient {}
 
