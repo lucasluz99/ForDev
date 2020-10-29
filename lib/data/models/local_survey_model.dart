@@ -1,4 +1,3 @@
-import '../../data/http/http.dart';
 import '../../domain/entities/entities.dart';
 
 class LocalSurveyModel {

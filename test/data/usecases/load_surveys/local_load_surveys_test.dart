@@ -1,42 +1,12 @@
-import 'package:ForDev/data/cache/cache.dart';
-import 'package:ForDev/data/http/http_error.dart';
-import 'package:ForDev/data/models/models.dart';
-import 'package:ForDev/domain/entities/entities.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:ForDev/data/usecases/load_surveys/load_surveys.dart';
+import 'package:ForDev/data/cache/cache.dart';
+
 import 'package:ForDev/domain/helpers/helpers.dart';
-import 'package:ForDev/domain/usecases/usecases.dart';
-
-import 'package:ForDev/data/usecases/usecases.dart';
-import 'package:ForDev/data/http/http.dart';
-
-class LocalLoadSurveys implements LoadSurveys {
-  final FetchCacheStorage fetchCacheStorage;
-
-  LocalLoadSurveys({this.fetchCacheStorage});
-
-  Future<List<SurveyEntity>> load() async {
-    final response = await fetchCacheStorage.fetch('surveys');
-
-    try {
-      if (response == null || response.isEmpty) {
-        throw Exception();
-      }
-      return response
-          .map<SurveyEntity>(
-              (json) => LocalSurveyModel.fromJson(json).toEntity())
-          .toList();
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class FetchCacheStorage {
-  Future<dynamic> fetch(String key);
-}
+import 'package:ForDev/domain/entities/entities.dart';
 
 class MockFetchCacheStorage extends Mock implements FetchCacheStorage {}
 
@@ -63,6 +33,9 @@ void main() {
 
   void mockFetchCacheStorage(List list) =>
       when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => list);
+
+  void mockFetchCacheError() =>
+      when(fetchCacheStorage.fetch(any)).thenThrow(Exception());
 
   final surveysList = [
     SurveyEntity(
@@ -121,10 +94,17 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-  test('Should throw UnexpectedError if cache returns incomplete data', () async {
+  test('Should throw UnexpectedError if cache returns incomplete data',
+      () async {
     mockFetchCacheStorage([
       {'date': '2020-07-20T00:00:00Z', 'didAnswer': 'false'},
     ]);
+    final future = sut.load();
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cache fails', () async {
+    mockFetchCacheError();
     final future = sut.load();
     expect(future, throwsA(DomainError.unexpected));
   });
