@@ -6,13 +6,13 @@ import '../../cache/cache.dart';
 import '../../models/models.dart';
 
 class LocalLoadSurveys implements LoadSurveys {
-  final CacheStorage fetchCacheStorage;
+  final CacheStorage cacheStorage;
 
-  LocalLoadSurveys({this.fetchCacheStorage});
+  LocalLoadSurveys({this.cacheStorage});
 
   Future<List<SurveyEntity>> load() async {
     try {
-      final response = await fetchCacheStorage.fetch('surveys');
+      final response = await cacheStorage.fetch('surveys');
       if (response == null || response.isEmpty) {
         throw Exception();
       }
@@ -22,6 +22,18 @@ class LocalLoadSurveys implements LoadSurveys {
           .toList();
     } catch (error) {
       throw DomainError.unexpected;
+    }
+  }
+
+  Future<void> validate() async {
+    final response = await cacheStorage.fetch('surveys');
+    try {
+      response
+          .map<SurveyEntity>(
+              (json) => LocalSurveyModel.fromJson(json).toEntity())
+          .toList();
+    }catch(error){
+      await cacheStorage.delete('surveys');
     }
   }
 }

@@ -13,7 +13,7 @@ class MockCacheStorage extends Mock implements CacheStorage {}
 void main() {
   group('load', () {
     LocalLoadSurveys sut;
-    CacheStorage fetchCacheStorage;
+    CacheStorage cacheStorage;
 
     List<Map<String, Object>> mockValidData() => [
           {
@@ -32,11 +32,11 @@ void main() {
 
     final list = mockValidData();
 
-    void mockFetchCacheStorage(List list) =>
-        when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => list);
+    void mockCacheStorage(List list) =>
+        when(cacheStorage.fetch(any)).thenAnswer((_) async => list);
 
-    void mockFetchCacheError() =>
-        when(fetchCacheStorage.fetch(any)).thenThrow(Exception());
+    void mockCacheError() =>
+        when(cacheStorage.fetch(any)).thenThrow(Exception());
 
     final surveysList = [
       SurveyEntity(
@@ -54,15 +54,15 @@ void main() {
     ];
 
     setUp(() {
-      fetchCacheStorage = MockCacheStorage();
-      sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
-      mockFetchCacheStorage(list);
+      cacheStorage = MockCacheStorage();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
+      mockCacheStorage(list);
     });
 
     test('Should call FetchCacheStorage with correct key', () async {
       await sut.load();
 
-      verify(fetchCacheStorage.fetch('surveys')).called(1);
+      verify(cacheStorage.fetch('surveys')).called(1);
     });
 
     test('Should return a list of SurveyEntity on success', () async {
@@ -72,20 +72,20 @@ void main() {
 
     test('Should throw UnexpectedError if cache returns an empty list',
         () async {
-      mockFetchCacheStorage([]);
+      mockCacheStorage([]);
       final future = sut.load();
       expect(future, throwsA(DomainError.unexpected));
     });
 
     test('Should throw UnexpectedError if cache returns null', () async {
-      mockFetchCacheStorage(null);
+      mockCacheStorage(null);
       final future = sut.load();
       expect(future, throwsA(DomainError.unexpected));
     });
 
     test('Should throw UnexpectedError if cache returns invalid data',
         () async {
-      mockFetchCacheStorage([
+      mockCacheStorage([
         {
           'id': faker.guid.guid(),
           'date': 'invalid date',
@@ -99,7 +99,7 @@ void main() {
 
     test('Should throw UnexpectedError if cache returns incomplete data',
         () async {
-      mockFetchCacheStorage([
+      mockCacheStorage([
         {'date': '2020-07-20T00:00:00Z', 'didAnswer': 'false'},
       ]);
       final future = sut.load();
@@ -107,9 +107,79 @@ void main() {
     });
 
     test('Should throw UnexpectedError if cache fails', () async {
-      mockFetchCacheError();
+      mockCacheError();
       final future = sut.load();
       expect(future, throwsA(DomainError.unexpected));
+    });
+  });
+
+  group('validate', () {
+    LocalLoadSurveys sut;
+    CacheStorage cacheStorage;
+
+    List<Map<String, Object>> mockValidData() => [
+          {
+            'id': faker.guid.guid(),
+            'date': '2020-07-20T00:00:00Z',
+            'question': faker.randomGenerator.string(50),
+            'didAnswer': 'false'
+          },
+          {
+            'id': faker.guid.guid(),
+            'date': '2020-07-20T00:00:00Z',
+            'question': faker.randomGenerator.string(50),
+            'didAnswer': 'true'
+          },
+        ];
+
+    final list = mockValidData();
+
+    void mockCacheStorage(List list) =>
+        when(cacheStorage.fetch(any)).thenAnswer((_) async => list);
+
+    void mockCacheError() =>
+        when(cacheStorage.fetch(any)).thenThrow(Exception());
+
+    final surveysList = [
+      SurveyEntity(
+        id: list[0]['id'],
+        question: list[0]['question'],
+        dateTime: DateTime.utc(2020, 7, 20),
+        didAnswer: false,
+      ),
+      SurveyEntity(
+        id: list[1]['id'],
+        question: list[1]['question'],
+        dateTime: DateTime.utc(2020, 7, 20),
+        didAnswer: true,
+      )
+    ];
+
+    setUp(() {
+      cacheStorage = MockCacheStorage();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
+      mockCacheStorage(list);
+    });
+
+    test('Should call CacheStorage with correct key', () async {
+      await sut.validate();
+
+      verify(cacheStorage.fetch('surveys')).called(1);
+    });
+
+    test('Should delete cache if it is invalid', () async {
+      mockCacheStorage([
+        {
+          'id': faker.guid.guid(),
+          'date': 'invalid date',
+          'question': faker.randomGenerator.string(50),
+          'didAnswer': 'false'
+        },
+      ]);
+
+      await sut.validate();
+
+      verify(cacheStorage.delete('surveys')).called(1);
     });
   });
 }
