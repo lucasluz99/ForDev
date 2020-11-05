@@ -180,6 +180,9 @@ void main() {
     LocalLoadSurveys sut;
     CacheStorage cacheStorage;
     List<SurveyEntity> surveys;
+
+    void mockCacheError() =>
+        when(cacheStorage.save(key:anyNamed('key'),value: anyNamed('value'))).thenThrow(Exception());
   
     List<SurveyEntity> mockSurveys() => [
           SurveyEntity(
@@ -220,6 +223,13 @@ void main() {
       await sut.save(surveys);
 
       verify(cacheStorage.save(key: 'surveys', value: list)).called(1);
+    });
+
+    test('Should throws UnexpectedError if save throws', () async {
+      mockCacheError();
+      final future = sut.save(surveys);
+
+      expect(future,throwsA(DomainError.unexpected));
     });
   });
 
